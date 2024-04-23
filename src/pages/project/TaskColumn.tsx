@@ -2,6 +2,7 @@ import { type Task } from '@/types/Task'
 import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import TaskCard from './TaskCard'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Ellipsis, Plus } from 'lucide-react'
 
 interface TaskColumnProps {
   id: string
@@ -21,8 +22,16 @@ function TaskColumn (
 
   return (
     <div className='w-80 h-[350px]'>
-      <div className='my-2'>
+      <div className='my-2 flex flex-row justify-between'>
         <h3 className='font-bold text-base'>{stateText}</h3>
+        <div className='flex flex-row gap-2'>
+          <div className='hover:text-neutral-500 text-neutral-300'>
+            <Ellipsis className='cursor-pointer'/>
+          </div>
+          <div className='rounded-md bg-neutral-300 p-0.5 hover:bg-neutral-500'>
+            <Plus size={20} className='cursor-pointer' color='white'/>
+          </div>
+        </div>
       </div>
       <ScrollArea className='h-[600px]'>
         <div
