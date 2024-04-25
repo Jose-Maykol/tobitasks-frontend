@@ -60,11 +60,18 @@ function TaskBoardContainer (): JSX.Element {
       setTasks(tasks => tasks.map(task => task.id === updatedTask.id ? updatedTask : task))
     })
 
+    socket.on('reorderTasks', (data) => {
+      const newOrderTasks: string[] = data.tasks
+      console.log('reorderTasks', newOrderTasks)
+      if (newOrderTasks.length !== tasks.length) return
+      setTasks(tasks => newOrderTasks.map(taskId => tasks.find(task => task.id === taskId) ?? tasks[0]))
+    })
+
     return () => {
       socket.off('connect')
       socket.off('disconnect')
     }
-  }, [id, setStatuses, setCategories])
+  }, [id, setStatuses, setCategories, tasks])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -95,12 +102,15 @@ function TaskBoardContainer (): JSX.Element {
     const overId = over.id
 
     console.log('activeTask', activeTask)
-    console.log('draggedTaskRef', draggedTaskRef.current)
+    console.log('draggedTaskRef', draggedTaskRef.current?.title)
 
     if (activeTask !== undefined && draggedTaskRef.current !== undefined) {
       if (activeTask.status !== draggedTaskRef.current.status) {
         socket.emit('changeTaskStatus', { taskId: activeTask.id, statusId: activeTask.status })
       }
+      const newOrderTasks: string[] = tasks.map(task => task.id)
+      console.log('se reordenaron las tareas')
+      socket.emit('reorderTask', { projectId: id, tasks: newOrderTasks })
     }
 
     if (activeId === overId) return
