@@ -3,6 +3,9 @@ import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import TaskCard from './TaskCard'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Ellipsis, Plus } from 'lucide-react'
+import { Sheet, SheetTrigger } from '@/components/ui/sheet'
+import AddTaskForm from './AddTaskForm'
+import AddTaskButton from './AddTaskButton'
 
 interface TaskColumnProps {
   id: string
@@ -28,9 +31,12 @@ function TaskColumn (
           <div className='hover:text-neutral-500 text-neutral-300'>
             <Ellipsis className='cursor-pointer'/>
           </div>
-          <div className='rounded-md bg-neutral-300 p-0.5 hover:bg-neutral-500'>
-            <Plus size={20} className='cursor-pointer' color='white'/>
-          </div>
+          <Sheet>
+            <SheetTrigger className='rounded-md bg-neutral-300 p-0.5 hover:bg-neutral-500'>
+              <Plus size={20} className='cursor-pointer' color='white'/>
+            </SheetTrigger>
+            <AddTaskForm />
+          </Sheet>
         </div>
       </div>
       <ScrollArea className='h-[600px]'>
@@ -44,6 +50,7 @@ function TaskColumn (
             {tasks.map(task => (
               <TaskCard key={task.id} task={task} />
             ))}
+            <AddTaskButton />
           </SortableContext>
         </div>
       </ScrollArea>
