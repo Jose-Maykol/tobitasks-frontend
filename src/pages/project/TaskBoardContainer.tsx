@@ -2,76 +2,30 @@ import { DndContext, type DragStartEvent, type DragEndEvent, DragOverlay, closes
 import TaskColumn from './TaskColumn'
 import TaskCard from './TaskCard'
 import { SortableContext, arrayMove, rectSortingStrategy } from '@dnd-kit/sortable'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { type Task } from '@/types/Task'
-import { type Status } from '@/types/Status'
-import { socket } from '@/socket'
 import { useParams } from 'react-router-dom'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import useStatusStore from '@/stores/useStatusStore'
-import useCategoryStore from '@/stores/useCategoryStore'
-import { type Category } from '@/types/Category'
+import useTaskSocketStore from '@/stores/useTaskSocketStore'
+import useTaskSocket from '@/hooks/useTaskSocket'
+import useTasksStore from '@/stores/useTaskStore'
 
 function TaskBoardContainer (): JSX.Element {
-  const params = useParams()
-  const { id } = params
-
-  const [tasks, setTasks] = useState<Task[]>([])
+  const { id } = useParams()
   const [activeTask, setActiveTask] = useState< Task | undefined>()
-  const [isConnected, setIsConnected] = useState(socket.connected)
   const draggedTaskRef = useRef<Task | undefined>(undefined)
 
-  const { statuses, setStatuses } = useStatusStore()
-  const { setCategories } = useCategoryStore()
+  const { tasks, updateTasks } = useTasksStore()
+  const { statuses } = useStatusStore()
 
-  useEffect(() => {
-    socket.io.opts.query = { projectId: id }
+  const { emitChangeTaskStatus, emitReorderTasks, isConnected } = useTaskSocketStore()
 
-    socket.emit('task')
+  useTaskSocket(id)
 
-    socket.on('connect', () => {
-      setIsConnected(true)
-    })
-
-    socket.on('disconnect', () => {
-      setIsConnected(false)
-    })
-
-    socket.connect()
-
-    socket.on('task', (data) => {
-      const projectTasks: Task[] = data.tasks
-      setTasks(projectTasks)
-    })
-
-    socket.on('status', (data) => {
-      console.log('statuses', data.statuses)
-      setStatuses(data.statuses as Status[])
-    })
-
-    socket.on('category', (data) => {
-      console.log('categories', data.categories)
-      setCategories(data.categories as Category[])
-    })
-
-    socket.on('updateTask', (data) => {
-      const updatedTask = data.task
-      console.log('updateTask', updatedTask)
-      setTasks(tasks => tasks.map(task => task.id === updatedTask.id ? updatedTask : task))
-    })
-
-    socket.on('reorderTasks', (data) => {
-      const newOrderTasks: string[] = data.tasks
-      console.log('reorderTasks', newOrderTasks)
-      if (newOrderTasks.length !== tasks.length) return
-      setTasks(tasks => newOrderTasks.map(taskId => tasks.find(task => task.id === taskId) ?? tasks[0]))
-    })
-
-    return () => {
-      socket.off('connect')
-      socket.off('disconnect')
-    }
-  }, [id, setStatuses, setCategories, tasks])
+  console.log('las tareas', tasks)
+  console.log('los estados', statuses)
+  console.log('isConnected', isConnected)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -106,11 +60,11 @@ function TaskBoardContainer (): JSX.Element {
 
     if (activeTask !== undefined && draggedTaskRef.current !== undefined) {
       if (activeTask.status !== draggedTaskRef.current.status) {
-        socket.emit('changeTaskStatus', { taskId: activeTask.id, statusId: activeTask.status })
+        emitChangeTaskStatus(activeTask.id, activeTask.status)
       }
       const newOrderTasks: string[] = tasks.map(task => task.id)
       console.log('se reordenaron las tareas')
-      socket.emit('reorderTask', { projectId: id, tasks: newOrderTasks })
+      emitReorderTasks(id, newOrderTasks)
     }
 
     if (activeId === overId) return
@@ -133,7 +87,7 @@ function TaskBoardContainer (): JSX.Element {
     if (!isActiveTask) return
 
     if (isActiveTask && isOverTask) {
-      setTasks(tasks => {
+      updateTasks(tasks => {
         const overIndex = tasks.findIndex(task => task.id === overId)
         const activeIndex = tasks.findIndex(task => task.id === activeId)
         if (tasks[activeIndex].status !== tasks[overIndex].status) {
@@ -147,15 +101,13 @@ function TaskBoardContainer (): JSX.Element {
     const isOverColumn = over.data.current?.type === 'Status'
 
     if (isActiveTask && isOverColumn) {
-      setTasks(tasks => {
+      updateTasks(tasks => {
         const activeIndex = tasks.findIndex(task => task.id === activeId)
         const overIndex = tasks.findIndex(task => task.status === overId)
         tasks[activeIndex].status = overId as string
         return arrayMove(tasks, activeIndex, overIndex)
       })
     }
-
-    // TODO: save the new order of tasks in the database
   }
 
   if (!isConnected) {
