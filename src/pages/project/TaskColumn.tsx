@@ -50,7 +50,7 @@ function TaskColumn (
             {tasks.map(task => (
               <TaskCard key={task.id} task={task} />
             ))}
-            <AddTaskButton />
+            <AddTaskButton statusId={id} />
           </SortableContext>
         </div>
       </ScrollArea>

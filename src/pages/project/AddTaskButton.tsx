@@ -1,8 +1,14 @@
 import { Plus } from 'lucide-react'
 import AddTaskCard from './AddTaskCard'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-function AddTaskButton (): JSX.Element {
+interface AddTaskButtonProps {
+  statusId: string
+}
+
+function AddTaskButton (
+  { statusId }: AddTaskButtonProps
+): JSX.Element {
   const [showAddTaskCard, setShowAddTaskCard] = useState<boolean>(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -10,8 +16,8 @@ function AddTaskButton (): JSX.Element {
     setShowAddTaskCard(true)
   }
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
+  const handleClickOutside = useCallback(
+    (event: MouseEvent): void => {
       if (
         wrapperRef.current !== null &&
         event.target instanceof Node &&
@@ -19,15 +25,23 @@ function AddTaskButton (): JSX.Element {
       ) {
         setShowAddTaskCard(false)
       }
-    }
+    }, []
+  )
 
+  const handleClose = (): void => {
+    setShowAddTaskCard(false)
+  }
+
+  useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside)
     return () => { document.removeEventListener('mousedown', handleClickOutside) }
-  }, [wrapperRef])
+  }, [handleClickOutside])
 
   return (
     <div ref={wrapperRef}>
-      {showAddTaskCard && <AddTaskCard />}
+      { showAddTaskCard && (
+        <AddTaskCard statusId={statusId} onClose={handleClose} />
+      )}
       {!showAddTaskCard && (
         <button
           className="w-full bg-neutral-100 p-2 rounded-sm text-black font-semibold hover:bg-neutral-200"

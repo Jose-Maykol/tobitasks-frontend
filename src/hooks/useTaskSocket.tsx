@@ -11,7 +11,7 @@ import { useEffect } from 'react'
 const useTaskSocket = (
   id: string | undefined
 ): void => {
-  const { setTasks, updateTasks, tasks } = useTasksStore()
+  const { setTasks, updateTasks, addTask, tasks } = useTasksStore()
   const { setStatuses } = useStatusStore()
   const { setCategories } = useCategoryStore()
   const { setIsConnected } = useTaskSocketStore((state) => state)
@@ -60,11 +60,17 @@ const useTaskSocket = (
       updateTasks(tasks => newOrderTasks.map(taskId => tasks.find(task => task.id === taskId) ?? tasks[0]))
     })
 
+    socket.on('newTask', (data) => {
+      const newTask: Task = data.task
+      console.log('newTask', newTask)
+      addTask(newTask)
+    })
+
     return () => {
       socket.off('connect')
       socket.off('disconnect')
     }
-  }, [id, setStatuses, setCategories, tasks, setTasks, updateTasks, setIsConnected])
+  }, [id, setStatuses, setCategories, tasks, setTasks, updateTasks, setIsConnected, addTask])
 }
 
 export default useTaskSocket
