@@ -6,7 +6,7 @@ function ProjectPage (): JSX.Element {
     <section className='flex flex-col w-full h-full'>
       <ProjectHeader />
       <div className='py-4'>
-        <TaskBoardContainer />
+        {/* <TaskBoardContainer /> */}
       </div>
     </section>
   )
