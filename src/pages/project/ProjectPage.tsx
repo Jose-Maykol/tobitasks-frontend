@@ -1,5 +1,6 @@
-import TaskBoardContainer from './TaskBoardContainer'
+/* import TaskBoardContainer from './TaskBoardContainer' */
 import ProjectHeader from './ProjectHeader'
+import KanbanBoard from './components/KanbanBoard'
 
 function ProjectPage (): JSX.Element {
   return (
@@ -7,6 +8,7 @@ function ProjectPage (): JSX.Element {
       <ProjectHeader />
       <div className='py-4'>
         {/* <TaskBoardContainer /> */}
+        <KanbanBoard />
       </div>
     </section>
   )
