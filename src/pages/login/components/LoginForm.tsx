@@ -1,13 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { authService } from '@/services/AuthService'
+import { useAuthStore } from '@/stores/useAuthStore'
 import axios, { type AxiosResponse } from 'axios'
-import Cookies from 'js-cookie'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 function LoginForm (): JSX.Element {
   const navigate = useNavigate()
+  const { login } = useAuthStore()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
@@ -16,13 +16,8 @@ function LoginForm (): JSX.Element {
     const password = form.get('password') as string
 
     try {
-      await authService.login({
-        email,
-        password
-      }).then((res: AxiosResponse['data']) => {
-        console.log(res)
+      await login(email, password).then((res: AxiosResponse['data']) => {
         toast.success(res.message as string)
-        Cookies.set('token', res.token as string, { expires: 7 })
         navigate('/main')
       })
     } catch (error) {
