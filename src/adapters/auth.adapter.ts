@@ -7,16 +7,18 @@ export interface ApiLoginResponse {
   accessToken: string
 }
 
-export interface AdaptedLoginResponse {
-  user: {
-    id: string
-    email: string
-    name: string
-  }
+export interface AuthUser {
+  user: User
   accessToken: string
 }
 
-export const adapterLoginResponse = (data: ApiLoginResponse): AdaptedLoginResponse => ({
+export interface User {
+  id: string
+  email: string
+  name: string
+}
+
+export const adapterLoginResponse = (data: ApiLoginResponse): AuthUser => ({
   user: {
     id: data.user.id,
     email: data.user.email,
