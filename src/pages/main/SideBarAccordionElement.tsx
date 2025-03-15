@@ -13,6 +13,15 @@ interface SideBarAccordionElementProps {
   }>
 }
 
+const getColor = (color: string): string => {
+  const colors: Record<string, string> = {
+    neutral: 'bg-neutral-600',
+    red: 'bg-red-600'
+  }
+
+  return colors[color] ?? 'bg-neutral-300'
+}
+
 function SideBarAccordionElement (
   { isOpen, data }: SideBarAccordionElementProps
 ): JSX.Element {
@@ -49,7 +58,7 @@ function SideBarAccordionElement (
                     className={({ isActive }) => `w-full flex flex-row items-center font-medium p-2 rounded-sm hover:bg-neutral-200 ${isActive ? 'font-bold bg-neutral-300' : ''}`}
                     key={item.id}
                   >
-                    <span className={`bg-${item.color} rounded-sm w-4 h-4 mr-2`}/>
+                    <span className={`${getColor(item.color)} rounded-sm w-4 h-4 mr-2`}/>
                     <h3 className='truncate w-40'>{item.name}</h3>
                   </NavLink>
                 </li>
@@ -80,7 +89,7 @@ function SideBarAccordionElement (
                   className={({ isActive }) => `hover:bg-neutral-200 w-full flex flex-row items-center font-medium p-2 rounded-sm ${isActive ? 'font-bold bg-neutral-300' : ''}`}
                   key={item.id}
                 >
-                  <span className={`bg-${item.color} rounded-sm w-4 h-4 mr-2`}/>
+                  <span className={`${getColor(item.color)} rounded-sm w-4 h-4 mr-2`}/>
                   <h3 className='truncate w-40'>{item.name}</h3>
                 </NavLink>
               </li>

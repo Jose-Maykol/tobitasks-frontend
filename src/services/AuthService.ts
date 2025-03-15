@@ -13,8 +13,8 @@ export const authService = {
   async login (credentials: LoginCredentials): Promise<ApiResponse<AuthUser>> {
     try {
       const response = await api.post('auth/login', credentials)
-      const token: string = response.data.token
-      Cookies.set('token', token, { expires: 7 })
+      const token: string = response.data.data.accessToken
+      Cookies.set('accessToken', token, { expires: 7 })
       return createApiAdapter(response, adapterLoginResponse)
     } catch (error) {
       return createApiAdapter(error as AxiosError)

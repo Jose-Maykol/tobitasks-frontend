@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import LoginForm from './LoginForm'
+import LoginForm from './components/LoginForm'
 
 function LoginPage (): JSX.Element {
   const backgroundStyle = {

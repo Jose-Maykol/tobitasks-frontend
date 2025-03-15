@@ -1,12 +1,7 @@
-import ProjectService from '@/services/ProjectService'
+import { projectService } from '@/services/ProjectService'
 import SideBarAccordionElement from './SideBarAccordionElement'
 import { useQuery } from 'react-query'
-import { type Project } from '@/types/Project'
 import { KanbanSquare, Loader2 } from 'lucide-react'
-
-interface DataProps {
-  projects: Project[]
-}
 
 interface ProjectsSidebarProps {
   isOpen: boolean
@@ -16,14 +11,14 @@ function ProjectsSidebar (
   { isOpen }: ProjectsSidebarProps
 ): JSX.Element {
   const { data, isLoading } = useQuery('projects', async () => {
-    const projects = await ProjectService.get()
-    return projects
+    const projects = await projectService.get()
+    return projects.data
   }, {
     refetchOnWindowFocus: false,
     retry: 1
   })
 
-  if (isLoading) {
+  if (isLoading && data === undefined) {
     return (
       <div className={'text-sm font-medium p-2 rounded-sm hover:bg-neutral-300 flex flex-row items-center justify-between w-full'}>
         <div className='inline-flex'>
@@ -36,7 +31,13 @@ function ProjectsSidebar (
   }
 
   return (
-    <SideBarAccordionElement isOpen={isOpen} data={(data as DataProps).projects}/>
+    <SideBarAccordionElement isOpen={isOpen} data={data !== undefined
+      ? data.map((project) => ({
+        id: project.id,
+        name: project.name,
+        color: project.primaryColor
+      }))
+      : []}/>
   )
 }
 

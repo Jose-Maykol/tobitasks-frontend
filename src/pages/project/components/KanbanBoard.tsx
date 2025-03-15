@@ -1,10 +1,13 @@
 import { socketService } from '@/services/socketService'
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useEffect } from 'react'
 
 function KanbanBoard (): JSX.Element {
+  const { token } = useAuthStore()
   useEffect(() => {
-    socketService.connect('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2QxMDAwNTAyMjNhMDVmZWExNzg0MTMiLCJlbWFpbCI6Im1heWtvbHppdG9fMjAwMkBob3RtYWlsLmNvbSIsImlhdCI6MTc0MTg0MzE5MiwiZXhwIjoxNzQxOTI5NTkyfQ.oO-KWohLoG6ZfAH4vn0crnSRUd8ycvFi9nKbTFueimM')
-  }, [])
+    if (token === null) return
+    socketService.connect(token)
+  }, [token])
 
   return (
     <div>

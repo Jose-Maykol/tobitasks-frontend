@@ -17,6 +17,7 @@ function LoginForm (): JSX.Element {
 
     try {
       await login(email, password).then((res: AxiosResponse['data']) => {
+        console.log(res)
         toast.success(res.message as string)
         navigate('/main')
       })
