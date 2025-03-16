@@ -1,6 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SOCKET_URL } from '@/config/config'
+import { type Task } from '@/types/Task'
 import { io, type Socket } from 'socket.io-client'
+
+export type SocketEvent =
+  | 'taskList'
+  | 'taskCreated'
+  | 'taskUpdated'
+  | 'taskDeleted'
+  | 'taskMoved'
+  | 'error'
+
+interface EventCallbackMap {
+  taskList: (tasks: Task[]) => void
+  taskCreated: (task: Task) => void
+  taskUpdated: (task: Task) => void
+  taskDeleted: (taskId: string) => void
+  taskMoved: (payload: { taskId: string, newStatus: Task['status'] }) => void
+  error: (error: { message: string }) => void
+}
 
 let socket: Socket | null = null
 
@@ -48,5 +66,9 @@ export const socketService = {
     if (socket !== null) {
       socket.emit(event, data)
     }
+  },
+
+  isConnected (): boolean {
+    return (socket?.connected) ?? false
   }
 }
