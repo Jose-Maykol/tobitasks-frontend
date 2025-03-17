@@ -33,36 +33,30 @@ const useTaskSocket = (
 
     socket.on('task', (data) => {
       const projectTasks: Task[] = data.tasks
-      console.log('tasks', projectTasks)
       setTasks(projectTasks)
     })
 
     socket.on('status', (data) => {
-      console.log('statuses', data.statuses)
       setStatuses(data.statuses as Status[])
     })
 
     socket.on('category', (data) => {
-      console.log('categories', data.categories)
       setCategories(data.categories as Category[])
     })
 
     socket.on('updateTask', (data) => {
       const updatedTask = data.task
-      console.log('updateTask', updatedTask)
       updateTasks(tasks => tasks.map(task => task.id === updatedTask.id ? updatedTask : task))
     })
 
     socket.on('reorderTasks', (data) => {
       const newOrderTasks: string[] = data.tasks
-      console.log('reorderTasks', newOrderTasks)
       if (newOrderTasks.length !== tasks.length) return
       updateTasks(tasks => newOrderTasks.map(taskId => tasks.find(task => task.id === taskId) ?? tasks[0]))
     })
 
     socket.on('newTask', (data) => {
       const newTask: Task = data.task
-      console.log('newTask', newTask)
       addTask(newTask)
     })
 

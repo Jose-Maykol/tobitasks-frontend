@@ -19,6 +19,10 @@ export const authService = {
     } catch (error) {
       return createApiAdapter(error as AxiosError)
     }
+  },
+
+  getToken (): string | null {
+    return Cookies.get('accessToken') ?? null
   }
 }
 

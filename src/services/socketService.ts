@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SOCKET_URL } from '@/config/config'
-import { type Task } from '@/types/Task'
+/* import { type Task } from '@/types/Task' */
 import { io, type Socket } from 'socket.io-client'
 
 export type SocketEvent =
@@ -11,14 +11,14 @@ export type SocketEvent =
   | 'taskMoved'
   | 'error'
 
-interface EventCallbackMap {
+/* interface EventCallbackMap {
   taskList: (tasks: Task[]) => void
   taskCreated: (task: Task) => void
   taskUpdated: (task: Task) => void
   taskDeleted: (taskId: string) => void
   taskMoved: (payload: { taskId: string, newStatus: Task['status'] }) => void
   error: (error: { message: string }) => void
-}
+} */
 
 let socket: Socket | null = null
 
@@ -29,7 +29,10 @@ export const socketService = {
       socket = io(socketUrl, {
         auth: {
           token
-        }
+        },
+        reconnection: true,
+        reconnectionAttempts: 3,
+        transports: ['websocket', 'polling']
         /* transports: ['websocket'] */
       })
 
@@ -39,6 +42,10 @@ export const socketService = {
 
       socket.on('disconnect', () => {
         console.log('Socket disconnected')
+      })
+
+      socket.on('error', (error: Error) => {
+        console.error('Error en el socket:', error)
       })
     }
   },
@@ -54,6 +61,7 @@ export const socketService = {
     if (socket !== null) {
       socket.on(event, callback)
     }
+    console.log('Socket event:', event)
   },
 
   off (event: string, callback: (...args: any[]) => void): void {
@@ -64,6 +72,7 @@ export const socketService = {
 
   emit (event: string, data: any): void {
     if (socket !== null) {
+      console.log('Emitting event:', event)
       socket.emit(event, data)
     }
   },

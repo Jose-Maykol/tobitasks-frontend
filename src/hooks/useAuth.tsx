@@ -9,7 +9,7 @@ export const useAuth = (): void => {
   useEffect(() => {
     const checkAuth = async (): Promise<void> => {
       try {
-        const token = Cookies.get('token')
+        const token = Cookies.get('accessToken')
         if (token === undefined) {
           navigate('/login')
         }

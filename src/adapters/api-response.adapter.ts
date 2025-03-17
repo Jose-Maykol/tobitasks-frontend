@@ -21,8 +21,6 @@ export const createApiAdapter = <T>(response: AxiosResponse | AxiosError, dataAd
     }
   }
 
-  console.log(response)
-
   return {
     success: response.status >= 200 && response.status < 300, // TODO:
     data: (dataAdapter != null) ? dataAdapter(response.data.data) : response.data.data,
