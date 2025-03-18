@@ -23,7 +23,11 @@ export type SocketEvent =
 let socket: Socket | null = null
 
 export const socketService = {
-  connect (token: string): void {
+  connect (
+    token: string,
+    onConnect: () => void,
+    onDisconnect: () => void
+  ): void {
     if (socket === null) {
       const socketUrl: string = `${SOCKET_URL}/tasks`
       socket = io(socketUrl, {
@@ -38,10 +42,12 @@ export const socketService = {
 
       socket.on('connect', () => {
         console.log('Socket connected')
+        onConnect()
       })
 
       socket.on('disconnect', () => {
         console.log('Socket disconnected')
+        onDisconnect()
       })
 
       socket.on('error', (error: Error) => {

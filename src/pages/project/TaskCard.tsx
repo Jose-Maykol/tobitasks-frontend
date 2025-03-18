@@ -1,5 +1,4 @@
-import useCategoryStore from '@/stores/useCategoryStore'
-import useStatusStore from '@/stores/useStatusStore'
+import useProjectStore from '@/stores/useProjectStore'
 import { type Task } from '@/types/Task'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -12,14 +11,16 @@ interface TaskCardProps {
 function TaskCard (
   { task }: TaskCardProps
 ): JSX.Element {
-  const { getStatusName } = useStatusStore()
-  const { getCategoryName } = useCategoryStore()
+  const { getStageName } = useProjectStore()
+  /* const { getCategoryName } = useCategoryStore() */
   const { attributes, listeners, setNodeRef, isDragging, transition, transform } = useSortable({
     id: task.id,
     data: {
       type: 'Task'
     }
   })
+
+  console.log('task', task)
 
   const style = {
     transition,
@@ -46,11 +47,11 @@ function TaskCard (
         </div>
         <div className='flex flex-row justify-start gap-2 flex-wrap'>
           <div className='text-xs bg-amber-400 rounded-sm px-2 font-semibold py-1'>
-            <p>{getStatusName(task.status)}</p>
+            <p>{getStageName(task.stageId)}</p>
           </div>
-          <div className='text-xs bg-green-500 rounded-sm px-2 font-semibold py-1'>
+          {/* <div className='text-xs bg-green-500 rounded-sm px-2 font-semibold py-1'>
             <p>{getCategoryName(task.category)}</p>
-          </div>
+          </div> */}
         </div>
         <div className='text-sm line-clamp-2 whitespace-normal my-2'>
           <p className='first-letter:uppercase'>{ task.description !== null && task.description } </p>

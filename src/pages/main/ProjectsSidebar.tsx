@@ -1,7 +1,7 @@
-import { projectService } from '@/services/ProjectService'
 import SideBarAccordionElement from './SideBarAccordionElement'
 import { useQuery } from 'react-query'
 import { KanbanSquare, Loader2 } from 'lucide-react'
+import { projectService } from '@/services/ProjectService'
 
 interface ProjectsSidebarProps {
   isOpen: boolean
