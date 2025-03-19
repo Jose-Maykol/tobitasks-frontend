@@ -19,7 +19,7 @@ function TaskColumn (
   const { attributes, listeners, setNodeRef, isOver } = useSortable({
     id,
     data: {
-      type: 'ProjectStage'
+      type: 'Stage'
     }
   })
 
