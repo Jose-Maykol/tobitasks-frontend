@@ -20,8 +20,6 @@ function TaskCard (
     }
   })
 
-  console.log('task', task)
-
   const style = {
     transition,
     transform: CSS.Transform.toString(transform)

@@ -3,6 +3,7 @@ export interface Task {
   title: string
   description: string
   stageId: string
+  sortOrder: number
 /*   category: string
   difficulty: string */
 }

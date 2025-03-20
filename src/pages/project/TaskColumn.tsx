@@ -1,5 +1,5 @@
 import { type Task } from '@/types/Task'
-import { SortableContext, useSortable } from '@dnd-kit/sortable'
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import TaskCard from './TaskCard'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Ellipsis, Plus } from 'lucide-react'
@@ -46,7 +46,10 @@ function TaskColumn (
           {...listeners}
           className={`w-80 h-full rounded-sm space-y-4 ${isOver ? 'bg-neutral-100' : null}`}
         >
-          <SortableContext items={tasks.map(task => task.id)}>
+          <SortableContext
+            items={tasks.map(task => task.id)}
+            strategy={verticalListSortingStrategy}
+          >
             {tasks.map(task => (
               <TaskCard key={task.id} task={task} />
             ))}
