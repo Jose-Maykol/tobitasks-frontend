@@ -16,7 +16,8 @@ function TaskCard (
   const { attributes, listeners, setNodeRef, isDragging, transition, transform } = useSortable({
     id: task.id,
     data: {
-      type: 'Task'
+      type: 'Task',
+      stageId: task.stageId
     }
   })
 
@@ -36,7 +37,7 @@ function TaskCard (
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className='w-80 h-36 border border-neutral-200 rounded-md p-2 bg-white'
+      className={`w-80 h-36 border border-neutral-200 rounded-md p-2 bg-white ${isDragging ? 'bg-red-600' : null}`}
     >
       <div className='flex flex-col justify-between'>
         <div className='flex flex-row justify-start items-center mb-2 text-base'>
@@ -47,9 +48,9 @@ function TaskCard (
           <div className='text-xs bg-amber-400 rounded-sm px-2 font-semibold py-1'>
             <p>{getStageName(task.stageId)}</p>
           </div>
-          {/* <div className='text-xs bg-green-500 rounded-sm px-2 font-semibold py-1'>
-            <p>{getCategoryName(task.category)}</p>
-          </div> */}
+          <div className='text-xs bg-green-500 rounded-sm px-2 font-semibold py-1'>
+            <p>{task.sortOrder}</p>
+          </div>
         </div>
         <div className='text-sm line-clamp-2 whitespace-normal my-2'>
           <p className='first-letter:uppercase'>{ task.description !== null && task.description } </p>

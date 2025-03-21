@@ -1,5 +1,6 @@
 import { type Task } from '@/types/Task'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import TaskCard from './TaskCard'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Ellipsis, Plus } from 'lucide-react'
@@ -16,15 +17,20 @@ interface TaskColumnProps {
 function TaskColumn (
   { id, stateText, tasks }: TaskColumnProps
 ): JSX.Element {
-  const { attributes, listeners, setNodeRef, isOver } = useSortable({
+  const { attributes, listeners, setNodeRef, isOver, transform, transition } = useSortable({
     id,
     data: {
       type: 'Stage'
     }
   })
 
+  const style = {
+    transition,
+    transform: CSS.Translate.toString(transform)
+  }
+
   return (
-    <div className='w-80 h-[350px]'>
+    <div className='w-80 h-[1000px]'>
       <div className='my-2 flex flex-row justify-between'>
         <h3 className='font-bold text-base'>{stateText}</h3>
         <div className='flex flex-row gap-2'>
@@ -39,12 +45,14 @@ function TaskColumn (
           </Sheet>
         </div>
       </div>
-      <ScrollArea className='h-[600px]'>
+      <ScrollArea className='h-[1000px]'>
         <div
+          style={style}
           ref={setNodeRef}
-          {...attributes}
-          {...listeners}
-          className={`w-80 h-full rounded-sm space-y-4 ${isOver ? 'bg-neutral-100' : null}`}
+          /* {...attributes}
+          {...listeners} */
+          /* className={`w-80 h-full rounded-sm space-y-4 ${isOver ? 'bg-neutral-100' : null}`} */
+          className='w-80 h-full rounded-sm space-y-4'
         >
           <SortableContext
             items={tasks.map(task => task.id)}

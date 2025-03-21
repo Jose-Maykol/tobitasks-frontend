@@ -76,13 +76,50 @@ function KanbanBoard (): JSX.Element {
     const { active, over } = event
     if (over === null) return
 
-    const activeId = active.id
-    const overId = over.id
+    /* const activeId = active.id
+    const overId = over.id */
 
-    /* const { active, over } = event
     if (over === null) return
 
-    const activeId = active.id
+    console.log(active)
+    console.log(over)
+
+    /* const isActiveTask = active.data.current?.type === 'Task'
+    const isOverTask = over.data.current?.type === 'Task'
+    const isOverColumn = over.data.current?.type === 'Stage'
+
+    if (isActiveTask && isOverTask) {
+      const stageId = over.data.current?.stageId
+      console.warn(stageId)
+      const tasksOfStage = tasks.filter((task) => task.stageId === stageId)
+      console.warn(tasksOfStage)
+      const overIndex = tasks.findIndex(task => task.id === overId)
+      const activeTask = tasks[overIndex]
+      const previousTask = tasks[overIndex - 1] ?? null
+      const nextTask = tasks[overIndex + 1] ?? null
+
+      if (previousTask !== null && nextTask !== null) {
+        const newSortOrder = (previousTask.sortOrder + nextTask.sortOrder) / 2
+        activeTask.sortOrder = newSortOrder
+        console.warn(newSortOrder)
+      } else if (previousTask === null && nextTask === null) {
+        const newSortOrder = 1
+        activeTask.sortOrder = newSortOrder
+        console.warn(newSortOrder)
+      } else if (previousTask === null) {
+        console.log(nextTask.sortOrder)
+        const newSortOrder = (nextTask.sortOrder / 2)
+        activeTask.sortOrder = newSortOrder
+        console.warn(newSortOrder)
+      } else if (nextTask === null) {
+        console.log(previousTask.sortOrder)
+        const newSortOrder = (previousTask.sortOrder + 1)
+        activeTask.sortOrder = newSortOrder
+        console.warn(newSortOrder)
+      }
+    } */
+
+    /* const activeId = active.id
     const overId = over.id
 
     console.log('activeTask', activeTask)
@@ -97,9 +134,9 @@ function KanbanBoard (): JSX.Element {
       emitReorderTasks(id, newOrderTasks)
     }
 
-    if (activeId === overId) return
+    if (activeId === overId) return */
 
-    setActiveTask(undefined) */
+    setActiveTask(undefined)
   }
 
   const handleDragOver = (event: DragEndEvent): Task[] | undefined => {
@@ -119,6 +156,10 @@ function KanbanBoard (): JSX.Element {
     if (!isActiveTask) return
 
     if (isActiveTask && isOverTask) {
+      const stageId = over.data.current?.stageId
+      console.warn(stageId)
+      const tasksOfStage = tasks.filter((task) => task.stageId === stageId)
+
       updateTasks(tasks => {
         const activeIndex = tasks.findIndex(task => task.id === activeId)
         const overIndex = tasks.findIndex(task => task.id === overId)
@@ -142,8 +183,6 @@ function KanbanBoard (): JSX.Element {
       updateTasks(tasks => {
         const activeIndex = tasks.findIndex(task => task.id === activeId)
         const activeTask = tasks[activeIndex]
-
-        console.warn('activeTask', activeIndex)
 
         if (activeTask !== undefined) {
           activeTask.stageId = overId as string
