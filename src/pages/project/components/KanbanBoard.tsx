@@ -10,6 +10,7 @@ import TaskColumn from '../TaskColumn'
 import { ScrollBar } from '@/components/ui/scroll-area'
 import TaskCard from '../TaskCard'
 import { useKanbanWebSocket } from './hooks/useKanbanSocket'
+import { socketService } from '@/services/socketService'
 
 function KanbanBoard (): JSX.Element {
   const { project } = useProjectStore()
@@ -46,13 +47,20 @@ function KanbanBoard (): JSX.Element {
     const { active, over } = event
     if (over === null) return
 
-    /* const activeId = active.id
-    const overId = over.id */
+    const activeId = active.id
+    /* const overId = over.id */
 
     if (over === null) return
 
-    console.log(active)
-    console.log(over)
+    const task = tasks.find(item => item.id === activeId)
+
+    if (task === undefined) return
+
+    socketService.emit('updateTask', {
+      id: task.id,
+      stageId: task.stageId,
+      sortOrder: task.sortOrder
+    })
 
     /* const isActiveTask = active.data.current?.type === 'Task'
     const isOverTask = over.data.current?.type === 'Task'
