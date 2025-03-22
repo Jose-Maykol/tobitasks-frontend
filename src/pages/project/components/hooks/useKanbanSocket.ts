@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 export const useKanbanWebSocket = (projectId: string): { isConnected: boolean, isLoaded: boolean } => {
   const { token } = useAuthStore()
-  const { setTasks } = useTasksStore()
+  const { setTasks, updateTask } = useTasksStore()
   const [isConnected, setIsConnected] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -18,6 +18,11 @@ export const useKanbanWebSocket = (projectId: string): { isConnected: boolean, i
       setIsLoaded(true)
     }
 
+    const handleUpdateTask = (task: Task): void => {
+      console.warn('task updated', task)
+      updateTask(task)
+    }
+
     socketService.connect(
       token,
       () => { setIsConnected(true) },
@@ -27,10 +32,12 @@ export const useKanbanWebSocket = (projectId: string): { isConnected: boolean, i
     socketService.on('taskList', handleTaskList)
     socketService.emit('getTasks', { projectId })
 
+    socketService.on('taskUpdated', handleUpdateTask)
+
     return () => {
       socketService.disconnect()
     }
-  }, [token, projectId, setTasks])
+  }, [token, projectId, setTasks, updateTask])
 
   return { isConnected, isLoaded }
 }
