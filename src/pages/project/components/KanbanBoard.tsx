@@ -1,53 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { socketService } from '@/services/socketService'
-import { useAuthStore } from '@/stores/useAuthStore'
 import useProjectStore from '@/stores/useProjectStore'
 import useTasksStore from '@/stores/useTaskStore'
 import { type Task } from '@/types/Task'
 import { closestCenter, DndContext, type DragEndEvent, DragOverlay, type DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import TaskColumn from '../TaskColumn'
 import { ScrollBar } from '@/components/ui/scroll-area'
 import TaskCard from '../TaskCard'
+import { useKanbanWebSocket } from './hooks/useKanbanSocket'
 
 function KanbanBoard (): JSX.Element {
-  const { token } = useAuthStore()
   const { project } = useProjectStore()
   const { tasks, setTasks, updateTasks, updateTask } = useTasksStore()
   const [activeTask, setActiveTask] = useState< Task | undefined>()
-  const [isConnected, setIsConnected] = useState<boolean>(false)
-  const [isLoaded, setIsLoaded] = useState<boolean>(false)
   const draggedTaskRef = useRef<Task | undefined>(undefined)
 
-  useEffect(() => {
-    if (token === null) return
-    socketService.connect(
-      token,
-      () => {
-        setIsConnected(true)
-      },
-      () => {
-        setIsConnected(false)
-      }
-    )
-
-    const handleTaskList = (tasks: any): any => {
-      console.warn('tasks', tasks)
-      setTasks(tasks as Task[])
-      setIsLoaded(true)
-    }
-
-    socketService.on('taskList', handleTaskList)
-    socketService.emit('getTasks', {
-      projectId: '67d3ad45d89578c7b34dfd80'
-    })
-
-    return () => {
-      socketService.disconnect()
-    }
-  }, [token, setTasks])
+  const { isConnected, isLoaded } = useKanbanWebSocket(project?.id ?? '')
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -251,7 +221,7 @@ function KanbanBoard (): JSX.Element {
 
         // Calcular posición relativa (si el cursor está en la mitad superior o inferior de la columna)
         const isDraggingToTopHalf =
-          activeRect.translated?.top + activeRect.translated?.height / 2 < overRect.top + overRect.height / 2
+          (activeRect.translated?.top ?? 0) + (activeRect.translated?.height ?? 0) / 2 < overRect.top + overRect.height / 2
 
         if (isDraggingToTopHalf) {
           // Insertar al INICIO de la columna
