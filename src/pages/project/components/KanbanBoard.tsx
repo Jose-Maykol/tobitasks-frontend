@@ -9,8 +9,9 @@ import { useRef, useState } from 'react'
 import TaskColumn from '../TaskColumn'
 import { ScrollBar } from '@/components/ui/scroll-area'
 import TaskCard from '../TaskCard'
-import { useKanbanWebSocket } from './hooks/useKanbanSocket'
+import { useKanbanWebSocket } from '../hooks/useKanbanSocket'
 import { socketService } from '@/services/socketService'
+import { SocketEvent } from '@/types/Socket'
 
 function KanbanBoard (): JSX.Element {
   const { project } = useProjectStore()
@@ -56,7 +57,7 @@ function KanbanBoard (): JSX.Element {
 
     if (task === undefined) return
 
-    socketService.emit('updateTask', {
+    socketService.emit(SocketEvent.UPDATE_TASK, {
       id: task.id,
       stageId: task.stageId,
       sortOrder: task.sortOrder
