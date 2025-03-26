@@ -8,7 +8,7 @@ import { useEffect, useState, useCallback } from 'react'
 export const useKanbanWebSocket = (projectId: string): { isConnected: boolean, isLoaded: boolean } => {
   const { token } = useAuthStore()
   const [isLoaded, setIsLoaded] = useState(false)
-  const { setTasks, updateTask } = useTasksStore()
+  const { setTasks, updateTask, updateTasks } = useTasksStore()
   const [isConnected, setIsConnected] = useState(false)
 
   const handleTaskList = useCallback((tasks: Task[]): void => {
@@ -21,6 +21,11 @@ export const useKanbanWebSocket = (projectId: string): { isConnected: boolean, i
     updateTask(task)
   }, [updateTask])
 
+  const handleAddTask = useCallback((task: Task): void => {
+    console.warn('task added', task)
+    updateTasks((tasks) => [...tasks, task])
+  }, [updateTasks])
+
   useEffect(() => {
     if (token === null) return
 
@@ -30,9 +35,10 @@ export const useKanbanWebSocket = (projectId: string): { isConnected: boolean, i
       () => { setIsConnected(false) }
     )
 
+    socketService.emit(SocketEvent.GET_TASKS, { projectId })
+    socketService.on(SocketEvent.TASK_CREATED, handleAddTask)
     socketService.on(SocketEvent.TASK_LIST, handleTaskList)
     socketService.on(SocketEvent.TASK_UPDATED, handleUpdateTask)
-    socketService.emit(SocketEvent.GET_TASKS, { projectId })
 
     return () => {
       socketService.disconnect()

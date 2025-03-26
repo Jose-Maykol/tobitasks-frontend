@@ -3,4 +3,6 @@ export enum SocketEvent {
   TASK_UPDATED = 'taskUpdated',
   GET_TASKS = 'getTasks',
   UPDATE_TASK = 'updateTask',
+  ADD_TASK = 'createTask',
+  TASK_CREATED = 'taskCreated',
 }
